@@ -13,6 +13,7 @@ import {
 
 import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import Geolocation from '@react-native-community/geolocation';
+import Geocoder from 'react-native-geocoding';
 
 export default function App() {
   useEffect(() => {
@@ -37,9 +38,19 @@ export default function App() {
       });
     });
   }
+  Geocoder.init('AIzaSyA6qHVVxQCw2tv3_0nC42jv6SBqYnlN1Uo', {language: 'en'});
+
+  async function handleAdress() {
+    Geocoder.from(coordsCurrent.latitude, coordsCurrent.longitude).then(
+      content => {
+        console.log(content.plus_code.compound_code.substring(9));
+      },
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
+      <Button title="Pesquisar" onPress={handleAdress} />
       <MapView
         onMapReady={() => {
           Platform.OS == 'android'
