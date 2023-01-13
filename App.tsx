@@ -8,17 +8,24 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
 import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import Geolocation from '@react-native-community/geolocation';
 import Geocoder from 'react-native-geocoding';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
+import {verticalScale, scale} from 'react-native-size-matters';
 
 export default function App() {
+  const [logradouro, setLogradouro] = useState('');
+
   useEffect(() => {
     handlePosition();
-  }, []);
+    handleAdress();
+  });
 
   const [coordsCurrent, setCoordsCurrent] = useState({
     latitude: 0,
@@ -26,7 +33,6 @@ export default function App() {
     latitudeDelta: 0.025,
     longitudeDelta: 0.0000001,
   });
-  const mapRef = createRef();
 
   async function handlePosition() {
     Geolocation.getCurrentPosition(content => {
@@ -38,20 +44,27 @@ export default function App() {
       });
     });
   }
-  Geocoder.init('AIzaSyA6qHVVxQCw2tv3_0nC42jv6SBqYnlN1Uo', {language: 'en'});
+  Geocoder.init('AIzaSyA6qHVVxQCw2tv3_0nC42jv6SBqYnlN1Uo');
 
   async function handleAdress() {
-    Geocoder.from(coordsCurrent.latitude, coordsCurrent.longitude).then(
+    await Geocoder.from(coordsCurrent.latitude, coordsCurrent.longitude).then(
       content => {
-        console.log(content.plus_code.compound_code.substring(9));
+        setLogradouro(content.plus_code.compound_code.substring(9));
       },
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <Button title="Pesquisar" onPress={handleAdress} />
+      <View style={styles.header}>
+        <Icon name="arrow-back" size={28} color={'black'} />
+
+        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+          <Text style={{fontSize: 19, color: 'black'}}>PEDALADA</Text>
+        </View>
+      </View>
       <MapView
+        style={{flex: 1}}
         onMapReady={() => {
           Platform.OS == 'android'
             ? PermissionsAndroid.request(
@@ -59,16 +72,15 @@ export default function App() {
               ).then(res => console.log('user aceitou', res))
             : null;
         }}
-        style={{flex: 1}}
         showsUserLocation
         region={coordsCurrent}
-        // region={{
-        //   latitude: -7.9248627,
-        //   longitude: -34.8306862,
-        //   latitudeDelta: 0.015,
-        //   longitudeDelta: 0.0121,
-        // }}
       />
+
+      <TouchableOpacity style={styles.btnStartActivity}>
+        <Text style={{color: 'white', fontSize: 18}}>Iniciar Atividade</Text>
+        {/* <Icon name="arrow-back" size={28} color={'black'} /> */}
+        <Icon2 name="arrow-right" size={28} color={'white'} />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -76,6 +88,21 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'gray',
+  },
+  header: {
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    paddingHorizontal: scale(10),
+    height: verticalScale(65),
+  },
+  btnStartActivity: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor: '#0563FF',
+    margin: '5%',
+    height: verticalScale(40),
+    borderRadius: 7,
+    alignItems: 'center',
   },
 });
