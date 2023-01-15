@@ -5,16 +5,14 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
 } from 'react-native';
 
 import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import Geolocation from '@react-native-community/geolocation';
-import Geocoder from 'react-native-geocoding';
-import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {verticalScale, scale} from 'react-native-size-matters';
 import TopBar from '../component/geral/TopBar';
+import {RFValue} from 'react-native-responsive-fontsize';
 
 export default function Home({navigation}) {
   useEffect(() => {
@@ -77,7 +75,9 @@ export default function Home({navigation}) {
           })
         }
         style={styles.btnStartActivity}>
-        <Text style={{color: 'white', fontSize: 18}}>Iniciar Atividade</Text>
+        <Text style={{color: 'white', fontSize: RFValue(18)}}>
+          Iniciar Atividade
+        </Text>
         <Icon2 name="arrow-right" size={28} color={'white'} />
       </TouchableOpacity>
     </SafeAreaView>
